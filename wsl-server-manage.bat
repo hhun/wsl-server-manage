@@ -2,7 +2,7 @@
 
 setlocal EnableDelayedExpansion & cd /d "%~dp0"
 
-SET WSL_TITLE=WSL子系统服务器管理 v1.4
+SET WSL_TITLE=WSL子系统服务器管理 v1.5
 SET WSL_SYSTEM= Ubuntu-20.04
 
 SET PORT_LIST=20,21,22,80,888,8888,8324
@@ -19,6 +19,7 @@ TITLE %WSL_TITLE%
     Exit /b
 )
 
+
 echo.
 echo  %WSL_TITLE%
 echo.
@@ -30,7 +31,7 @@ for /f "tokens=4" %%i in ('route print^|findstr 0.0.0.0.*0.0.0.0') do (
 )
 echo  本机内网IP地址 %internal_ip%
 
-for /f "tokens=1" %%i in ('arp -a^|findstr "172.*动态"') do (
+for /f "tokens=1" %%i in ('arp -a^|findstr "17*.*动态"') do (
 	set wsl_ip=%%i
 )
 echo  WSL 内网IP地址 %wsl_ip%
@@ -41,7 +42,7 @@ echo  [4]重启服务器         [5]重载服务器
 echo.
 echo  [6]启动子系统         [7]关闭子系统         [8]查看子系统发行版本
 echo.
-echo  [9]查看WSL端口映射    [10]添加WSL端口映射   [11]清空WSL端口映射
+echo  [9]查看WSL端口映射    [10]同步WSL端口映射
 echo.
 echo  [0]退出
 echo ――――― 操作选项 ―――――
@@ -62,7 +63,6 @@ if /i "%v%" == "8" goto show_version
 
 if /i "%v%" == "9" goto do_show_wsl_mapping
 if /i "%v%" == "10" goto do_add_wsl_mapping
-if /i "%v%" == "11" goto do_del_wsl_mapping
 if /i "%v%" == "0" goto exit
 
 :do_status
@@ -128,7 +128,7 @@ goto first
 :do_show_wsl_mapping
 @echo  #################### 查看WSL端口映射 Start ####################
 @echo.
-for /f "tokens=1" %%i in ('arp -a^|findstr "172.*动态"') do (
+for /f "tokens=1" %%i in ('arp -a^|findstr "17*.*动态"') do (
 	set wsl_ip=%%i
 )
 echo  WSL 内网IP地址 %wsl_ip%
@@ -138,22 +138,18 @@ cmd /c "netsh interface portproxy show all"
 goto first
 
 :do_add_wsl_mapping
-@echo  #################### 添加WSL端口映射 Start ####################
-for /f "tokens=1" %%i in ('arp -a^|findstr "172.*动态"') do (
+@echo  #################### 同步WSL端口映射 Start ####################
+@echo  -- 清空WSL端口映射
+cmd /c "netsh interface portproxy reset"
+@echo  -- 添加WSL端口映射
+for /f "tokens=1" %%i in ('arp -a^|findstr "17*.*动态"') do (
 	set wsl_ip=%%i
 )
 for %%i in (%PORT_LIST%) do (
 	cmd /c "echo netsh interface portproxy add v4tov4 listenport=%%i listenaddress=* connectport=%%i connectaddress=%wsl_ip%"
 	cmd /c "netsh interface portproxy add v4tov4 listenport=%%i listenaddress=* connectport=%%i connectaddress=%wsl_ip%"
 )
-@echo  #################### 添加WSL端口映射  End  ####################
-@echo.
-goto first
-
-:do_del_wsl_mapping
-@echo  #################### 清空WSL端口映射 Start ####################
-cmd /c "netsh interface portproxy reset"
-@echo  #################### 清空WSL端口映射  End  ####################
+@echo  #################### 同步WSL端口映射  End  ####################
 @echo.
 goto first
 
