@@ -2,7 +2,7 @@
 
 setlocal EnableDelayedExpansion & cd /d "%~dp0"
 
-SET WSL_TITLE=WSL子系统服务器管理 v1.3
+SET WSL_TITLE=WSL子系统服务器管理 v1.4
 SET WSL_SYSTEM= Ubuntu-20.04
 
 SET PORT_LIST=20,21,22,80,888,8888,8324
@@ -139,6 +139,9 @@ goto first
 
 :do_add_wsl_mapping
 @echo  #################### 添加WSL端口映射 Start ####################
+for /f "tokens=1" %%i in ('arp -a^|findstr "172.*动态"') do (
+	set wsl_ip=%%i
+)
 for %%i in (%PORT_LIST%) do (
 	cmd /c "echo netsh interface portproxy add v4tov4 listenport=%%i listenaddress=* connectport=%%i connectaddress=%wsl_ip%"
 	cmd /c "netsh interface portproxy add v4tov4 listenport=%%i listenaddress=* connectport=%%i connectaddress=%wsl_ip%"
