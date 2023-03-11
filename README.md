@@ -29,3 +29,9 @@
 
 1. 将 `/etc/init.wsl` 文件复制到Linux系统里面。
 2. 在Windows系统里面双击打开 `wsl-server-manage.bat` 即可。
+
+## 子系统发行版本
+
+若您使用的子系统发行版本不是`Ubuntu-20.04`，需要将`wsl-server-manage.bat`文件里面的`Ubuntu-20.04`改成您正在使用的子系统发行版本。
+
+例如：将 `SET WSL_SYSTEM= Ubuntu-20.04` 改成 `SET WSL_SYSTEM= Debian`
