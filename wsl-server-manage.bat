@@ -2,7 +2,7 @@
 
 setlocal EnableDelayedExpansion & cd /d "%~dp0"
 
-SET WSL_TITLE=WSL子系统服务器管理 v1.5
+SET WSL_TITLE=WSL子系统服务器管理 v1.6
 SET WSL_SYSTEM= Ubuntu-20.04
 
 SET PORT_LIST=20,21,22,80,888,8888,8324
@@ -42,7 +42,7 @@ echo  [4]重启服务器         [5]重载服务器
 echo.
 echo  [6]启动子系统         [7]关闭子系统         [8]查看子系统发行版本
 echo.
-echo  [9]查看WSL端口映射    [10]同步WSL端口映射
+echo  [9]查看WSL端口映射    [10]同步WSL端口映射   [11]清空WSL端口映射
 echo.
 echo  [0]退出
 echo ――――― 操作选项 ―――――
@@ -63,6 +63,7 @@ if /i "%v%" == "8" goto show_version
 
 if /i "%v%" == "9" goto do_show_wsl_mapping
 if /i "%v%" == "10" goto do_add_wsl_mapping
+if /i "%v%" == "11" goto do_remove_wsl_mapping
 if /i "%v%" == "0" goto exit
 
 :do_status
@@ -153,6 +154,12 @@ for %%i in (%PORT_LIST%) do (
 @echo.
 goto first
 
+:do_remove_wsl_mapping
+@echo  #################### 清空WSL端口映射 Start ####################
+cmd /c "netsh interface portproxy reset"
+@echo  #################### 清空WSL端口映射  End  ####################
+@echo.
+goto first
 
 :exit
 echo 退出
