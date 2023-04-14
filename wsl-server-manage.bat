@@ -98,6 +98,7 @@ cmd /c "wsl -u root -d %WSL_SYSTEM% service bt default"
 @echo.
 goto first
 
+:do_reload
 @echo  #################### 重载服务器 Start ####################
 cmd /c "wsl -u root -d %WSL_SYSTEM% /etc/init.wsl reload"
 cmd /c "wsl -u root -d %WSL_SYSTEM% service bt default"
